@@ -3,6 +3,8 @@ import numpy as np
 
 def load_linear_example1():
     """
+    >>> import datasets
+    >>> X,Y = datasets.load_linear_example1()
     >>> X[0]
     array([1, 4])
     """
