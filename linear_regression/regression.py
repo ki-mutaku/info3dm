@@ -12,8 +12,8 @@ class LinearRegression:
         >>> X,Y = datasets.load_linear_example1()
         >>> model = regression.LinearRegression()
         >>> model.fit(X, Y)
-        >>> model.theta
-        array([5.30412371, 0.49484536])
+        >>> print(model.theta)
+        [5.30412371 0.49484536]
         """
         temp = np.linalg.inv(np.dot(x.T, x))
         self.theta = np.dot(np.dot(temp, x.T), y)
