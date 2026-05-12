@@ -1,4 +1,3 @@
-from os.path import exists
 from pathlib import Path
 
 import japanize_matplotlib
@@ -6,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-PROJECT_ROOT = Path("~/info3dm/")
+PROJECT_ROOT = Path("~/info3dm/").expanduser()
 
 
 def true_function(x):
@@ -56,12 +55,18 @@ def calc_sample_set(columns=["観測点", "真の値"], min_n=-1, max_n=1, seed=
     :param int n: 一様分布乱数の個数 (default: 20)
     :return: サンプル集合のDataFrame
     :rtype: pandas.core.frame.DataFrame
+
+    >>> df = calc_sample_set()
+    >>> df.shape
+    (20, 2)
+    >>> df.columns
+    Index(['観測点', '真の値'], dtype='str')
     """
     rng = np.random.default_rng(seed)
     x = rng.uniform(min_n, max_n, n)
     y = true_function(x)
     temp = np.column_stack([x, y])
-    df = pd.DataFrame(temp, columns)
+    df = pd.DataFrame(temp, columns=columns)
     return df
 
 
@@ -138,3 +143,9 @@ def read_tsv(relative_path):
     path_obj = PROJECT_ROOT / relative_path
     df = pd.read_csv(path_obj, sep="\t", index_col=0)
     return df
+
+
+if __name__ == "__main__":
+    df = calc_sample_set()
+    df = calc_noise_and_apply(df, "観測値")
+    to_tsv(df)
