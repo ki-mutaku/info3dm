@@ -1,7 +1,12 @@
+from os.path import exists
+from pathlib import Path
+
 import japanize_matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+
+PROJECT_ROOT = Path("~/info3dm/")
 
 
 def true_function(x):
@@ -18,18 +23,19 @@ def true_function(x):
     return np.sin(np.pi * x + 0.8) * 10
 
 
-def plot_true_function_save(x, y, path, xlabel="x", ylabel="y", title="真の関数"):
+def plot_true_function_save(x, y, filename, xlabel="x", ylabel="y", title="真の関数"):
     """真の関数をプロットして保存する
 
     true_function専用のプロット関数。演習1.1の関数化。
 
     :param x: 定義域
     :param y: 真の関数
-    :param string path: グラフを出力するパス
+    :param string filename: グラフファイルの名前
     :param string xlabel: x軸のラベル (default: "x")
     :param string ylabel: y軸のラベル (default: "y")
     :param string title: グラフのタイトル (default: "真の関数")
     """
+    path = PROJECT_ROOT / Path(f"img/{filename}")
     plt.plot(x, y)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
@@ -59,7 +65,7 @@ def calc_sample_set(columns=["観測点", "真の値"], min_n=-1, max_n=1, seed=
     return df
 
 
-def plot_sample_set_and_save(df, xcolumn, ycolumn, path):
+def plot_sample_set_and_save(df, xcolumn, ycolumn, filename):
     """サンプル集合をプロットして保存する
 
     サンプル集合を散布図でプロットする
@@ -67,9 +73,10 @@ def plot_sample_set_and_save(df, xcolumn, ycolumn, path):
     :param pandas.core.frame.DataFrame df: サンプル集合のDataFrame
     :param string xcolumn: x軸に設定するDataFrameのカラム
     :param string ycolumn: y軸に設定するDataFrameのカラム
-    :param string path: グラフを保存するパス
+    :param string filename: グラフファイルの名前
     """
     plt.scatter(df[xcolumn], df[ycolumn])
+    path = PROJECT_ROOT / Path(f"img/{filename}")
     plt.savefig(path)
 
 
@@ -83,7 +90,7 @@ def calc_noise_and_apply(df, column, n=20, mu=0.0, sigma=np.sqrt(2.0), div=2):
     :param int n: 正規分布乱数の個数 (default: 20)
     :param float mu: 正規分布の平均値 (default: 0.0)
     :param float sigma: 正規分布の偏差 (default: np.sqrt(2.0))
-    :param div: ノイズの割る数
+    :param div: ノイズの割る数 (default: 2)
     :return: ノイズ列が追加されたDataFrame
     :rtype: pandas.core.frame.DataFrame
     """
@@ -96,7 +103,7 @@ def calc_noise_and_apply(df, column, n=20, mu=0.0, sigma=np.sqrt(2.0), div=2):
 
 
 # ノイズをプロットして保存
-def plot_noise_and_save(df, xcolumn, ycolumn, path, color="red"):
+def plot_noise_and_save(df, xcolumn, ycolumn, filename, color="red"):
     """ノイズをプロットして保存する
 
     散布図でプロットする。デフォルトは赤の丸点。
@@ -104,10 +111,11 @@ def plot_noise_and_save(df, xcolumn, ycolumn, path, color="red"):
     :param pandas.core.frame.DataFrame df: プロット対象のDataFrame
     :param string xcolumn: x軸のDataFrameカラム
     :param string ycolumn: y軸のDataFrameカラム
-    :param string path: グラフの出力パス
+    :param string filename: グラフファイルの名前
     :param string color: 散布図のドットの色 (default: "red")
     """
     plt.scatter(df[xcolumn], df[ycolumn], c=color)
+    path = PROJECT_ROOT / Path(f"img/{filename}")
     plt.savefig(path)
 
 
@@ -116,14 +124,17 @@ def to_tsv(df):
 
     :param pandas.core.frame.DataFrame df: 変換するDataFrame
     """
-    df.to_csv("./ex4/output.tsv", sep="\t", index=True)
+    output_path = PROJECT_ROOT / Path("tsv/output.tsv")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(output_path, sep="\t", index=True)
 
 
-def read_tsv(path):
+def read_tsv(relative_path):
     """tsv形式のファイルを読み込む
 
     :param string path: TSVファイルのパス
     :return: TSVから読み込んだDataFrame
     """
-    df = pd.read_csv(path, sep="\t")
+    path_obj = PROJECT_ROOT / relative_path
+    df = pd.read_csv(path_obj, sep="\t", index_col=0)
     return df
