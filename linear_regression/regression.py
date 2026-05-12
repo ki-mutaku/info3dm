@@ -48,9 +48,7 @@ class RidgeRegression(LinearRegression):
     def __init__(self, alpha=0.1):
         self.alpha = alpha
 
-    def fit(self, input, output):
-        xTx = np.dot(input.T, output)
-        I = np.eye(len(xTx))
-        self.theta = np.dot(
-            np.dot(np.linalg.inv(xTx + self.alpha * I), input.T), output
-        )
+    def fit(self, x, y):
+        xTx = np.dot(x.T, x)
+        l = np.eye(len(xTx))
+        self.theta = np.dot(np.dot(np.linalg.inv(xTx + self.alpha * l), x.T), y)
