@@ -15,3 +15,8 @@ print(model.theta)
 
 print(model.predict(X))
 print(model.score(X, Y))
+
+X, Y = datasets.load_nonlinear_example1()
+ex_X = datasets.polynomial2_features(X)
+print(f"{ex_X=}")
+print(f"{Y=}")
